@@ -2,8 +2,11 @@ import connection from "../db.js";
 
 const index = (req, res) => {
   const sql = `
-    SELECT *
-    FROM books;
+    SELECT books.*, ROUND(AVG(reviews.vote), 2) AS vote_avg
+    FROM books
+    LEFT JOIN reviews
+    ON books.id = reviews.book_id
+    GROUP BY books.id;
   `;
 
   connection.query(sql, (err, results) => {
@@ -28,9 +31,12 @@ const show = (req, res) => {
   const id = req.params.id;
 
   const bookSql = `
-    SELECT *
+    SELECT books.*, ROUND(AVG(reviews.vote), 2) AS vote_avg
     FROM books
-    WHERE id = ?;
+    LEFT JOIN reviews
+    ON books.id = reviews.book_id
+    WHERE books.id = ?
+    GROUP BY books.id;
   `;
 
   const reviewsSql = `
