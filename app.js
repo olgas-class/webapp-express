@@ -2,6 +2,7 @@ import express from "express";
 import booksRouter from "./routes/books.js";
 import notFound from "./middleware/notFound.js";
 import errorHandler from "./middleware/errorsHandler.js";
+import imagePath from "./middleware/imagePath.js";
 
 const app = express();
 const port = process.env.SERVER_PORT;
@@ -15,7 +16,7 @@ app.get("/", (req, res) => {
   });
 });
 
-app.use("/books", booksRouter);
+app.use("/books", imagePath, booksRouter);
 
 app.use(notFound);
 

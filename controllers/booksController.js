@@ -10,8 +10,15 @@ const index = (req, res) => {
     if (err) {
       console.log(err);
     } else {
+      const books = results.map((curBook) => {
+        return {
+          ...curBook,
+          image: `${req.imagePath}/${curBook.image}`,
+        };
+      });
+
       res.json({
-        data: results,
+        data: books,
       });
     }
   });
