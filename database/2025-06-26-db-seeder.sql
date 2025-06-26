@@ -1,14 +1,14 @@
 INSERT INTO `books` (`title`, `author`, `abstract`, `image`) VALUES
 ('Il nome della rosa', 'Umberto Eco', 'Un giallo storico ambientato in un monastero medievale.', 'il_nome_della_rosa.webp'),
-('La Divina Commedia', 'Dante Alighieri', 'Capolavoro della letteratura mondiale in tre cantiche.', 'la_divina_commedia.jpg'),
-('I Promessi Sposi', 'Alessandro Manzoni', 'Un romanzo storico che racconta la storia di Renzo e Lucia.', 'i_promessi_sposi.jpg'),
-('Se questo è un uomo', 'Primo Levi', 'Testimonianza delle esperienze in un campo di concentramento.', 'se_questo_e_un_uomo.jpg'),
-('L’isola del tesoro', 'Robert Louis Stevenson', 'Un’avventura tra pirati e tesori nascosti.', 'lisola_del_tesoro.jpg'),
-('Il Gattopardo', 'Giuseppe Tomasi di Lampedusa', 'Una narrazione sulla Sicilia e il cambiamento sociale.', 'il_gattopardo.jpg'),
-('Pinocchio', 'Carlo Collodi', 'Le avventure di un burattino che vuole diventare un bambino vero.', 'pinocchio.jpg'),
-('Cuore', 'Edmondo De Amicis', 'Racconto di formazione ambientato nell’Italia unita.', 'cuore.jpg'),
-('La solitudine dei numeri primi', 'Paolo Giordano', 'Un racconto di sofferenza e connessione.', 'la_solitudine_dei_numeri_primi.jpg'),
-('Il barone rampante', 'Italo Calvino', 'La storia di un nobile che vive sugli alberi.', 'il_barone_rampante.jpg');
+('La Divina Commedia', 'Dante Alighieri', 'Capolavoro della letteratura mondiale in tre cantiche.', 'la_divina_commedia.webp'),
+('I Promessi Sposi', 'Alessandro Manzoni', 'Un romanzo storico che racconta la storia di Renzo e Lucia.', 'i_promessi_sposi.webp'),
+('Se questo è un uomo', 'Primo Levi', 'Testimonianza delle esperienze in un campo di concentramento.', 'se_questo_e_un_uomo.webp'),
+('L’isola del tesoro', 'Robert Louis Stevenson', 'Un’avventura tra pirati e tesori nascosti.', 'lisola_del_tesoro.webp'),
+('Il Gattopardo', 'Giuseppe Tomasi di Lampedusa', 'Una narrazione sulla Sicilia e il cambiamento sociale.', 'il_gattopardo.webp'),
+('Pinocchio', 'Carlo Collodi', 'Le avventure di un burattino che vuole diventare un bambino vero.', 'pinocchio.webp'),
+('Cuore', 'Edmondo De Amicis', 'Racconto di formazione ambientato nell’Italia unita.', 'cuore.webp'),
+('La solitudine dei numeri primi', 'Paolo Giordano', 'Un racconto di sofferenza e connessione.', 'la_solitudine_dei_numeri_primi.webp'),
+('Il barone rampante', 'Italo Calvino', 'La storia di un nobile che vive sugli alberi.', 'il_barone_rampante.webp');
 
 -- Recensioni per "Il nome della rosa"
 INSERT INTO `reviews` (`book_id`, `name`, `vote`, `text`) VALUES
