@@ -56,9 +56,11 @@ const show = (req, res) => {
       });
     } else {
       connection.query(reviewsSql, [id], (err, reviewsResults) => {
+        const bookData = booksResults[0];
         res.json({
           data: {
-            ...booksResults[0],
+            ...bookData,
+            image: `${req.imagePath}/${bookData.image}`,
             reviews: reviewsResults,
           },
         });
