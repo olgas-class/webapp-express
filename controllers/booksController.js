@@ -1,6 +1,6 @@
 import connection from "../db.js";
 
-const index = (req, res) => {
+const index = (req, res, next) => {
   const sql = `
     SELECT books.*, ROUND(AVG(reviews.vote), 2) AS vote_avg
     FROM books
@@ -11,23 +11,22 @@ const index = (req, res) => {
 
   connection.query(sql, (err, results) => {
     if (err) {
-      console.log(err);
-    } else {
-      const books = results.map((curBook) => {
-        return {
-          ...curBook,
-          image: `${req.imagePath}/${curBook.image}`,
-        };
-      });
-
-      res.json({
-        data: books,
-      });
+      return next(new Error(err));
     }
+    const books = results.map((curBook) => {
+      return {
+        ...curBook,
+        image: curBook.image ? `${req.imagePath}/${curBook.image}` : null,
+      };
+    });
+
+    res.json({
+      data: books,
+    });
   });
 };
 
-const show = (req, res) => {
+const show = (req, res, next) => {
   const id = req.params.id;
 
   const bookSql = `
@@ -47,7 +46,7 @@ const show = (req, res) => {
 
   connection.query(bookSql, [id], (err, booksResults) => {
     if (err) {
-      console.log(err);
+      return next(new Error(err));
     }
 
     if (booksResults.length === 0) {
@@ -56,11 +55,14 @@ const show = (req, res) => {
       });
     } else {
       connection.query(reviewsSql, [id], (err, reviewsResults) => {
+        if (err) {
+          return new Error(err);
+        }
         const bookData = booksResults[0];
         res.json({
           data: {
             ...bookData,
-            image: `${req.imagePath}/${bookData.image}`,
+            image: bookData.image ? `${req.imagePath}/${bookData.image}` : null,
             reviews: reviewsResults,
           },
         });
