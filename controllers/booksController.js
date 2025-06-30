@@ -1,15 +1,25 @@
 import connection from "../db.js";
 
 const index = (req, res, next) => {
-  const sql = `
+  const search = req.query.search;
+
+  let sql = `
     SELECT books.*, ROUND(AVG(reviews.vote), 2) AS vote_avg
     FROM books
     LEFT JOIN reviews
-    ON books.id = reviews.book_id
-    GROUP BY books.id;
-  `;
+    ON books.id = reviews.book_id`;
+  const params = [];
 
-  connection.query(sql, (err, results) => {
+  if (search !== undefined) {
+    sql += `
+      WHERE books.title LIKE ?
+    `;
+    params.push(`%${search}%`);
+  }
+
+  sql += ` GROUP BY books.id;`;
+
+  connection.query(sql, params, (err, results) => {
     if (err) {
       return next(new Error(err));
     }
