@@ -1,7 +1,9 @@
 import connection from "../db.js";
 
 const index = (req, res, next) => {
+  const elementiPerPagina = 6;
   const search = req.query.search;
+  const page = req.query.page ? req.query.page : 1;
 
   let sql = `
     SELECT books.*, ROUND(AVG(reviews.vote), 2) AS vote_avg
@@ -17,7 +19,12 @@ const index = (req, res, next) => {
     params.push(`%${search}%`);
   }
 
-  sql += ` GROUP BY books.id;`;
+  const offset = elementiPerPagina * (page - 1);
+
+  sql += `
+    GROUP BY books.id
+    LIMIT ${offset}, ${elementiPerPagina}; 
+  `;
 
   connection.query(sql, params, (err, results) => {
     if (err) {
