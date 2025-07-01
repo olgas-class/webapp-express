@@ -89,9 +89,54 @@ const show = (req, res, next) => {
   });
 };
 
+const storeReview = (req, res, next) => {
+  // dalla request prendiamo l'id
+  const { id } = req.params;
+  console.log(id);
+
+  // Verifichiamo che il libro con questo id esiste.
+  const bookSql = `
+    SELECT *
+    FROM books
+    WHERE id = ?
+  `;
+
+  // Se il libro esiste
+  connection.query(bookSql, [id], (err, bookResults) => {
+    if (bookResults.length === 0) {
+      return res.status(404).json({
+        error: "Libro non trovato",
+      });
+    }
+
+    // Preleviamo dal body della richiesta i dati
+    const { name, vote, text } = req.body;
+    console.log(name, vote, text);
+
+    // Salviamo la nuova review nel database
+    const newReviewSql = `
+      INSERT INTO reviews (book_id, name, vote, text)
+      VALUES (?, ?, ?, ?)
+    `;
+
+    connection.query(newReviewSql, [id, name, vote, text], (err, results) => {
+      if (err) {
+        return next(new Error(err));
+      }
+      return res.status(201).json({
+        message: "Review created",
+        id: results.insertId,
+      });
+    });
+
+    // Inviamo la risposta con il codice 201
+  });
+};
+
 const controller = {
   index,
   show,
+  storeReview,
 };
 
 export default controller;
