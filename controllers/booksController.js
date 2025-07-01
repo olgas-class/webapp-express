@@ -1,3 +1,4 @@
+import slugify from "slugify";
 import connection from "../db.js";
 
 const index = (req, res, next) => {
@@ -89,6 +90,40 @@ const show = (req, res, next) => {
   });
 };
 
+const store = (req, res, next) => {
+  console.log("Creo libro");
+
+  // prendiamo i dati del libro dal body della richiesta
+  const { title, author, abstract } = req.body;
+  console.log(title, author, abstract);
+
+  // Creiamo lo slug dal titolo
+  const slug = slugify(title, {
+    lower: true,
+    strinct: true,
+  });
+
+  // Scriviamo la prepared statement query
+  const sql = `
+    INSERT INTO books (slug, title, author, abstract)
+    VALUES (?, ?, ?, ?);
+  `;
+  console.log(sql);
+
+  // Eseguiamo la query
+  connection.query(sql, [slug, title, author, abstract], (err, results) => {
+    //  Se c'è errore lo giestiamo
+    if (err) {
+      return next(new Error(err));
+    }
+    //  Invio la risposta con il codie 201 e id e slug
+    return res.status(201).json({
+      id: results.insertId,
+      slug,
+    });
+  });
+};
+
 const storeReview = (req, res, next) => {
   // dalla request prendiamo l'id
   const { id } = req.params;
@@ -136,6 +171,7 @@ const storeReview = (req, res, next) => {
 const controller = {
   index,
   show,
+  store,
   storeReview,
 };
 
