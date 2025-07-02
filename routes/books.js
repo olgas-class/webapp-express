@@ -7,6 +7,7 @@ const router = express.Router();
 router.get("/", booksController.index);
 router.get("/:slug", booksController.show);
 router.post("/", upload.single("image"), booksController.store);
+router.delete("/:slug", booksController.destroy);
 
 router.post("/:id/reviews", booksController.storeReview);
 

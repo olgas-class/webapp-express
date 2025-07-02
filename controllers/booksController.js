@@ -1,5 +1,6 @@
 import slugify from "slugify";
 import connection from "../db.js";
+import fs from "fs";
 
 const index = (req, res, next) => {
   const elementiPerPagina = 50;
@@ -146,6 +147,43 @@ const store = (req, res, next) => {
   );
 };
 
+const destroy = (req, res, next) => {
+  const slug = req.params.slug;
+
+  // verifico se libro esiste
+  const bookSql = `
+    SELECT *
+    FROM books
+    WHERE slug = ?
+  `;
+
+  connection.query(bookSql, [slug], (err, results) => {
+    if (results.length === 0) {
+      return res.status(404).json({
+        error: "Libro non trovato",
+      });
+    }
+
+    // Se questo libro ha l'immagine, cancelliamo anche l'immagine
+    const filePath = `public/images/books/${results[0].image}`;
+    fs.unlinkSync(filePath);
+
+    const bookId = results[0].id;
+    const deleteSql = `
+      DELETE
+      FROM books
+      WHERE ID = ?
+    `;
+
+    connection.query(deleteSql, [bookId], (err, results) => {
+      if (err) {
+        return next(new Error(err));
+      }
+      res.sendStatus(204);
+    });
+  });
+};
+
 const storeReview = (req, res, next) => {
   // dalla request prendiamo l'id
   const { id } = req.params;
@@ -194,6 +232,7 @@ const controller = {
   index,
   show,
   store,
+  destroy,
   storeReview,
 };
 
