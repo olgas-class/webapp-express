@@ -2,7 +2,7 @@ import slugify from "slugify";
 import connection from "../db.js";
 
 const index = (req, res, next) => {
-  const elementiPerPagina = 6;
+  const elementiPerPagina = 50;
   const search = req.query.search;
   const page = req.query.page ? req.query.page : 1;
 
@@ -91,11 +91,9 @@ const show = (req, res, next) => {
 };
 
 const store = (req, res, next) => {
-  console.log("Creo libro");
-
   // prendiamo i dati del libro dal body della richiesta
   const { title, author, abstract } = req.body;
-  console.log(title, author, abstract);
+  const image = req.file.filename;
 
   // Creiamo lo slug dal titolo
   const slug = slugify(title, {
@@ -105,23 +103,26 @@ const store = (req, res, next) => {
 
   // Scriviamo la prepared statement query
   const sql = `
-    INSERT INTO books (slug, title, author, abstract)
-    VALUES (?, ?, ?, ?);
+    INSERT INTO books (slug, title, author, abstract, image)
+    VALUES (?, ?, ?, ?, ?);
   `;
-  console.log(sql);
 
   // Eseguiamo la query
-  connection.query(sql, [slug, title, author, abstract], (err, results) => {
-    //  Se c'è errore lo giestiamo
-    if (err) {
-      return next(new Error(err));
+  connection.query(
+    sql,
+    [slug, title, author, abstract, image],
+    (err, results) => {
+      //  Se c'è errore lo giestiamo
+      if (err) {
+        return next(new Error(err));
+      }
+      //  Invio la risposta con il codie 201 e id e slug
+      return res.status(201).json({
+        id: results.insertId,
+        slug,
+      });
     }
-    //  Invio la risposta con il codie 201 e id e slug
-    return res.status(201).json({
-      id: results.insertId,
-      slug,
-    });
-  });
+  );
 };
 
 const storeReview = (req, res, next) => {
