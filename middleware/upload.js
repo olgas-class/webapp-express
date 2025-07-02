@@ -11,10 +11,11 @@ const storage = multer.diskStorage({
     const fileName =
       Date.now() +
       "-" +
-      slugify(title, {
-        lower: true,
-        strinct: true,
-      }) +
+      (title &&
+        slugify(title, {
+          lower: true,
+          strinct: true,
+        })) +
       path.extname(file.originalname);
 
     cb(null, fileName);

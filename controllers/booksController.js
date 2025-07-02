@@ -90,9 +90,30 @@ const show = (req, res, next) => {
   });
 };
 
+const validateRequest = (req) => {
+  const { title, author, abstract } = req.body;
+  if (!title || !author) {
+    return false;
+  }
+  if (title.length < 4 || author.length < 4 || abstract.length < 20) {
+    return false;
+  }
+
+  return true;
+};
+
 const store = (req, res, next) => {
+  // controllo i dati
+  if (!validateRequest(req)) {
+    return res.status(400).json({
+      message: "Dati errati",
+    });
+  }
+  console.log(validateRequest(req));
+
   // prendiamo i dati del libro dal body della richiesta
   const { title, author, abstract } = req.body;
+
   const image = req.file.filename;
 
   // Creiamo lo slug dal titolo
