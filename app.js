@@ -1,8 +1,14 @@
 import express from "express";
+import booksRouter from "./routers/books.js";
+import handleError from "./middlewares/handleError.js";
 
 const app = express();
 const port = process.env.SERVER_PORT;
 
-app.listen(() => {
+app.use("/api/books", booksRouter);
+
+app.use(handleError);
+
+app.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
 });
