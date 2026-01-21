@@ -73,4 +73,27 @@ function show(req, res, next) {
   });
 }
 
-export default { index, show };
+function search(req, res, next) {
+  const key = req.query.key;
+
+  const searchKey = `%${key}%`;
+
+  const query = `
+    SELECT books.*, CAST(AVG(reviews.vote) AS FLOAT) AS avg_vote
+    FROM books
+    LEFT JOIN reviews
+    ON books.id = reviews.book_id
+    WHERE title LIKE ? 
+    OR abstract LIKE ? 
+    GROUP BY books.id
+  `;
+
+  connection.query(query, [searchKey, searchKey], (err, results) => {
+    if (err) return next(err);
+    res.json({
+      results: results,
+    });
+  });
+}
+
+export default { index, show, search };
