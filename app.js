@@ -6,13 +6,13 @@ import cors from "cors";
 const app = express();
 const port = process.env.SERVER_PORT;
 
-app.use(express.static("public"));
-
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
   }),
 );
+
+app.use(express.static("public"));
 
 app.use("/api/books", booksRouter);
 
