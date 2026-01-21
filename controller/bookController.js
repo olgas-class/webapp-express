@@ -1,14 +1,20 @@
 import connection from "../database/dbConnection.js";
 
 function index(req, res, next) {
+  const page = req.query.page ? parseInt(req.query.page) : 1;
+  const itemsPerPage = 3;
+  const offset = (page - 1) * itemsPerPage;
+
   const query = `
     SELECT books.*, CAST(AVG(reviews.vote) AS FLOAT) AS avg_vote
     FROM books
     LEFT JOIN reviews
     ON books.id = reviews.book_id
-    GROUP BY books.id`;
+    GROUP BY books.id
+    LIMIT ? OFFSET ?
+  `;
 
-  connection.query(query, (err, result) => {
+  connection.query(query, [itemsPerPage, offset], (err, result) => {
     if (err) return next(err);
     return res.json({
       results: result,
