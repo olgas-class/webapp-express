@@ -16,8 +16,22 @@ function index(req, res, next) {
 
   connection.query(query, [itemsPerPage, offset], (err, result) => {
     if (err) return next(err);
-    return res.json({
-      results: result,
+
+    const queryTotale = "SELECT COUNT(`id`) AS `total` FROM `books`";
+
+    connection.query(queryTotale, (err, resultTotale) => {
+      if (err) return next(err);
+
+      const totalBooks = resultTotale[0].total;
+
+      return res.json({
+        info: {
+          total: totalBooks,
+          pages: Math.ceil(totalBooks / itemsPerPage),
+          currentPage: page,
+        },
+        results: result,
+      });
     });
   });
 }
