@@ -37,16 +37,16 @@ function index(req, res, next) {
 }
 
 function show(req, res, next) {
-  const id = req.params.id;
+  const slug = req.params.slug;
 
   const query = `
     SELECT books.*, CAST(AVG(reviews.vote) AS FLOAT) AS vote_avg
     FROM books
     LEFT JOIN reviews
     ON books.id = reviews.book_id
-    WHERE books.id = ?`;
+    WHERE books.slug = ?`;
 
-  connection.query(query, [id], (err, results) => {
+  connection.query(query, [slug], (err, results) => {
     if (err) return next(err);
 
     if (results.length === 0) {
@@ -62,7 +62,7 @@ function show(req, res, next) {
     // SE IL LIBRO È STATO TROVATO, RECUPERIAMO LE RECENSIONI
     const reviewsQuery = "SELECT * FROM `reviews` WHERE `book_id` = ?";
 
-    connection.query(reviewsQuery, [id], (err, reviewsResult) => {
+    connection.query(reviewsQuery, [book.id], (err, reviewsResult) => {
       if (err) return next(err);
 
       res.json({

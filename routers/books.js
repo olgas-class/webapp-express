@@ -5,5 +5,5 @@ const router = express.Router();
 
 router.get("/", bookController.index);
 router.get("/search", bookController.search);
-router.get("/:id", bookController.show);
+router.get("/:slug", bookController.show);
 export default router;
