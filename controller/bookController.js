@@ -42,14 +42,16 @@ function show(req, res, next) {
   const query = `
     SELECT books.*, CAST(AVG(reviews.vote) AS FLOAT) AS vote_avg
     FROM books
-    LEFT JOIN reviews
+    JOIN reviews
     ON books.id = reviews.book_id
     WHERE books.slug = ?`;
 
   connection.query(query, [slug], (err, results) => {
     if (err) return next(err);
 
-    if (results.length === 0) {
+    console.log(results);
+
+    if (results.length === 0 || results[0].id === null) {
       res.status(404);
       return res.json({
         error: "NOT FOUND",
@@ -96,4 +98,26 @@ function search(req, res, next) {
   });
 }
 
-export default { index, show, search };
+function storeReview(req, res, next) {
+  const data = req.body;
+  const bookId = req.params.id;
+
+  const sql =
+    "INSERT INTO `reviews` (book_id, name, vote, text) VALUES (?, ?, ?, ?);";
+
+  connection.query(
+    sql,
+    [bookId, data.name, data.vote, data.text],
+    (err, result) => {
+      if (err) return next(err);
+
+      res.status(201);
+      res.json({
+        message: "La review è stata aggiunta",
+        id: result.insertId,
+      });
+    },
+  );
+}
+
+export default { index, show, search, storeReview };

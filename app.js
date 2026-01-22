@@ -14,6 +14,8 @@ app.use(
 
 app.use(express.static("public"));
 
+app.use(express.json());
+
 app.use("/api/books", booksRouter);
 
 app.use(handleError);
