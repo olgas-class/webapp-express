@@ -102,22 +102,46 @@ function storeReview(req, res, next) {
   const data = req.body;
   const bookId = req.params.id;
 
-  const sql =
-    "INSERT INTO `reviews` (book_id, name, vote, text) VALUES (?, ?, ?, ?);";
+  const bookQuery = "SELECT * FROM `books` WHERE `id` = ?";
 
-  connection.query(
-    sql,
-    [bookId, data.name, data.vote, data.text],
-    (err, result) => {
-      if (err) return next(err);
+  connection.query(bookQuery, [bookId], (err, result) => {
+    if (err) return next(err);
 
-      res.status(201);
-      res.json({
-        message: "La review è stata aggiunta",
-        id: result.insertId,
+    if (result.length === 0) {
+      res.status(404);
+      return res.json({
+        error: "NOT FOUND",
+        message: "Libro non trovato",
       });
-    },
-  );
+    }
+
+    // controllo i dati
+    if (!data.name || !data.vote || data.vote < 1 || data.vote > 5) {
+      res.status(400);
+      return res.json({
+        error: "CLIENT ERROR",
+        message:
+          "Il nome e il voto sono obbligatorie. Il voto eve essere compreso tra 1 e 5",
+      });
+    }
+
+    const sql =
+      "INSERT INTO `reviews` (book_id, name, vote, text) VALUES (?, ?, ?, ?);";
+
+    connection.query(
+      sql,
+      [bookId, data.name, data.vote, data.text],
+      (err, result) => {
+        if (err) return next(err);
+
+        res.status(201);
+        res.json({
+          message: "La review è stata aggiunta",
+          id: result.insertId,
+        });
+      },
+    );
+  });
 }
 
 export default { index, show, search, storeReview };
