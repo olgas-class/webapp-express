@@ -1,3 +1,4 @@
+import slugify from "slugify";
 import connection from "../database/dbConnection.js";
 
 function index(req, res, next) {
@@ -42,7 +43,7 @@ function show(req, res, next) {
   const query = `
     SELECT books.*, CAST(AVG(reviews.vote) AS FLOAT) AS vote_avg
     FROM books
-    JOIN reviews
+    LEFT JOIN reviews
     ON books.id = reviews.book_id
     WHERE books.slug = ?`;
 
@@ -98,6 +99,36 @@ function search(req, res, next) {
   });
 }
 
+function store(req, res, next) {
+  const { title, author, abstract } = req.body;
+
+  console.log(req.body, req.file);
+
+  const slug = slugify(title, {
+    lower: true,
+    strict: true, // rimuove caratteri speciali
+  });
+
+  const fileName = req.file?.filename || null;
+
+  const sql =
+    "INSERT INTO `books` (`slug`, `title`,`author`, `abstract`, `image`) VALUES  (?, ?, ?, ?, ?)";
+
+  connection.query(
+    sql,
+    [slug, title, author, abstract, fileName],
+    (err, result) => {
+      if (err) return next(err);
+
+      res.status(201);
+      return res.json({
+        message: "Il libro è stato salvato con success",
+        bookId: result.insertId,
+      });
+    },
+  );
+}
+
 function storeReview(req, res, next) {
   const data = req.body;
   const bookId = req.params.id;
@@ -144,4 +175,4 @@ function storeReview(req, res, next) {
   });
 }
 
-export default { index, show, search, storeReview };
+export default { index, show, search, storeReview, store };
