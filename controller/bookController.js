@@ -3,7 +3,7 @@ import connection from "../database/dbConnection.js";
 
 function index(req, res, next) {
   const page = req.query.page ? parseInt(req.query.page) : 1;
-  const itemsPerPage = 3;
+  const itemsPerPage = 12;
   const offset = (page - 1) * itemsPerPage;
 
   const query = `
@@ -124,6 +124,7 @@ function store(req, res, next) {
       return res.json({
         message: "Il libro è stato salvato con success",
         bookId: result.insertId,
+        bookSlug: slug,
       });
     },
   );
